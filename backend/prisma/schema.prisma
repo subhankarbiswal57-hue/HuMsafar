@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PLANNER
+  ENGINEER
+  RESEARCHER
+  CITIZEN
+}
+
+enum AssetCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  CRITICAL
+}
+
+enum SurfaceType {
+  ASPHALT
+  CONCRETE
+  GRAVEL
+  UNPAVED
+}
+
+model User {
+  id                String    @id @default(uuid())
+  email             String    @unique
+  passwordHash      String
+  firstName         String
+  lastName          String
+  role              Role      @default(CITIZEN)
+  isEmailVerified   Boolean   @default(false)
+  emailVerifyToken  String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  googleId          String?   @unique
+  refreshTokens     RefreshToken[]
+  createdRoads      Road[]         @relation("RoadCreatedBy")
+  createdBridges    Bridge[]       @relation("BridgeCreatedBy")
+  createdTransit    TransitAsset[] @relation("TransitCreatedBy")
+  complaints        Complaint[]    @relation("ComplaintReporter")
+  inspectionsDone   Inspection[]   @relation("InspectionInspector")
+  auditLogs         AuditLog[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Road {
+  id            String         @id @default(uuid())
+  code          String         @unique
+  name          String
+  description   String?
+  surfaceType   SurfaceType    @default(ASPHALT)
+  lengthKm      Float
+  widthM        Float?
+  lanes         Int            @default(2)
+  condition     AssetCondition @default(GOOD)
+  conditionScore Float         @default(80)
+  yearBuilt     Int?
+  lastInspected DateTime?
+  geometry      Json
+  properties    Json?
+  createdById   String?
+  createdBy     User?          @relation("RoadCreatedBy", fields: [createdById], references: [id])
+  maintenance   MaintenanceRecord[]
+  inspections   Inspection[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([condition])
+}
+
+model Bridge {
+  id             String         @id @default(uuid())
+  code           String         @unique
+  name           String
+  spanLengthM    Float
+  widthM         Float?
+  material       String
+  condition      AssetCondition @default(GOOD)
+  conditionScore Float          @default(80)
+  yearBuilt      Int?
+  loadCapacityT  Float?
+  lastInspected  DateTime?
+  latitude       Float
+  longitude      Float
+  properties     Json?
+  createdById    String?
+  createdBy      User?          @relation("BridgeCreatedBy", fields: [createdById], references: [id])
+  maintenance    MaintenanceRecord[]
+  inspections    Inspection[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([condition])
+}
+
+enum TransitType {
+  BUS_STOP
+  RAIL_STATION
+  SIGNAL
+  DEPOT
+}
+
+model TransitAsset {
+  id          String         @id @default(uuid())
+  code        String         @unique
+  name        String
+  type        TransitType
+  condition   AssetCondition @default(GOOD)
+  latitude    Float
+  longitude   Float
+  properties  Json?
+  createdById String?
+  createdBy   User?          @relation("TransitCreatedBy", fields: [createdById], references: [id])
+  maintenance MaintenanceRecord[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([type])
+}
+
+enum AssetType {
+  UTILITY_POLE
+  DRAINAGE
+  STREETLIGHT
+  SIGNAGE
+  OTHER
+}
+
+model InfraAsset {
+  id         String         @id @default(uuid())
+  code       String         @unique
+  name       String
+  type       AssetType
+  condition  AssetCondition @default(GOOD)
+  latitude   Float
+  longitude  Float
+  properties Json?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@index([type])
+}
+
+enum MaintenanceStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model MaintenanceRecord {
+  id             String            @id @default(uuid())
+  title          String
+  description    String?
+  status         MaintenanceStatus @default(PLANNED)
+  costEstimate   Float?
+  actualCost     Float?
+  scheduledDate  DateTime?
+  completedDate  DateTime?
+  roadId         String?
+  road           Road?             @relation(fields: [roadId], references: [id])
+  bridgeId       String?
+  bridge         Bridge?           @relation(fields: [bridgeId], references: [id])
+  transitId      String?
+  transit        TransitAsset?     @relation(fields: [transitId], references: [id])
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model Inspection {
+  id           String    @id @default(uuid())
+  inspectorId  String?
+  inspector    User?     @relation("InspectionInspector", fields: [inspectorId], references: [id])
+  notes        String?
+  conditionAtInspection AssetCondition
+  photoUrls    String[]
+  roadId       String?
+  road         Road?     @relation(fields: [roadId], references: [id])
+  bridgeId     String?
+  bridge       Bridge?   @relation(fields: [bridgeId], references: [id])
+  inspectedAt  DateTime  @default(now())
+
+  @@index([roadId])
+  @@index([bridgeId])
+}
+
+enum ComplaintStatus {
+  SUBMITTED
+  ACKNOWLEDGED
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+model Complaint {
+  id            String          @id @default(uuid())
+  title         String
+  description   String
+  category      String
+  status        ComplaintStatus @default(SUBMITTED)
+  latitude      Float
+  longitude     Float
+  photoUrls     String[]
+  reporterId    String?
+  reporter      User?           @relation("ComplaintReporter", fields: [reporterId], references: [id])
+  reporterName  String?
+  reporterEmail String?
+  resolutionNotes String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([status])
+  @@index([reporterId])
+}
+
+model GisLayer {
+  id         String   @id @default(uuid())
+  name       String
+  layerType  String
+  geojson    Json
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+}
+
+model AIPrediction {
+  id             String   @id @default(uuid())
+  assetType      String
+  assetId        String
+  predictionType String
+  result         Json
+  confidence     Float
+  createdAt      DateTime @default(now())
+
+  @@index([assetType, assetId])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+}
