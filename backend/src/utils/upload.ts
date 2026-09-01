@@ -8,6 +8,7 @@ if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/heic"];
 
+// Multi-driver storage: Local filesystem with Cloudinary / S3 public URL resolver
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
   filename: (_req, file, cb) => {
@@ -30,5 +31,9 @@ export const photoUpload = multer({
 });
 
 export function fileToPublicUrl(filename: string): string {
+  // If S3 / Cloudinary CDN configured in environment, point to CDN base URL
+  if (process.env.STORAGE_CDN_URL) {
+    return `${process.env.STORAGE_CDN_URL.replace(/\/$/, "")}/${filename}`;
+  }
   return `/uploads/${filename}`;
 }
