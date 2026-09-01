@@ -41,10 +41,12 @@ export const googleLogin = asyncHandler(async (req: Request, res: Response) => {
 
   const accessToken = signAccessToken({ sub: user.id, role: user.role, email: user.email });
   const refreshToken = await issueRefreshToken(user.id);
+  
+  const isSecure = env.COOKIE_SECURE || env.NODE_ENV === "production";
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: env.COOKIE_SECURE,
-    sameSite: "lax",
+    secure: isSecure,
+    sameSite: isSecure ? "none" : "lax",
     maxAge: env.JWT_REFRESH_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000,
     path: "/api/auth",
   });

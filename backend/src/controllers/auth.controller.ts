@@ -7,11 +7,13 @@ import { prisma } from "../config/prisma";
 
 const REFRESH_COOKIE = "refreshToken";
 
-function setRefreshCookie(res: Response, token: string) {
+export function setRefreshCookie(res: Response, token: string) {
+  // Support cross-domain cookies when COOKIE_SECURE is true (Render + Vercel deployment)
+  const isSecure = env.COOKIE_SECURE || env.NODE_ENV === "production";
   res.cookie(REFRESH_COOKIE, token, {
     httpOnly: true,
-    secure: env.COOKIE_SECURE,
-    sameSite: "lax",
+    secure: isSecure,
+    sameSite: isSecure ? "none" : "lax",
     maxAge: env.JWT_REFRESH_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000,
     path: "/api/auth",
   });
@@ -44,7 +46,8 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   const token = req.cookies?.[REFRESH_COOKIE];
   if (token) await authService.logoutUser(token);
-  res.clearCookie(REFRESH_COOKIE, { path: "/api/auth" });
+  const isSecure = env.COOKIE_SECURE || env.NODE_ENV === "production";
+  res.clearCookie(REFRESH_COOKIE, { path: "/api/auth", secure: isSecure, sameSite: isSecure ? "none" : "lax" });
   res.json({ message: "Logged out" });
 });
 

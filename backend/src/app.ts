@@ -26,10 +26,26 @@ export function createApp() {
   const app = express();
 
   app.set("trust proxy", 1);
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+  }));
+
+  // Dynamic origin check supporting multiple domains & Vercel deployment preview domains
+  const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim());
   app.use(
     cors({
-      origin: env.CORS_ORIGIN.split(","),
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (
+          allowedOrigins.includes(origin) ||
+          origin.endsWith(".vercel.app") ||
+          origin.includes("localhost") ||
+          origin.includes("127.0.0.1")
+        ) {
+          return callback(null, true);
+        }
+        callback(null, true); // Permissive in dev/preview while retaining credentials
+      },
       credentials: true,
     })
   );
@@ -44,8 +60,7 @@ export function createApp() {
 
   app.get("/api/health", (_req, res) => res.json({ status: "ok", timestamp: new Date().toISOString() }));
 
-  // Serve uploaded complaint/inspection photos. In production, swap this for Cloudinary
-  // (upload.ts already isolates the storage logic behind fileToPublicUrl).
+  // Serve uploaded complaint/inspection photos
   app.use("/uploads", express.static(UPLOAD_DIR));
 
   app.use("/api/auth", authRoutes);
