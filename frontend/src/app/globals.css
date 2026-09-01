@@ -2,24 +2,162 @@
 @tailwind components;
 @tailwind utilities;
 @import "leaflet/dist/leaflet.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --background: #f5f7fa;
-  --foreground: #101828;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
 }
 
 .dark {
-  --background: #0b1220;
-  --foreground: #e6edf3;
+  --background: #020617;
+  --foreground: #e2e8f0;
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(99, 102, 241, 0.15);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4338ca transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1, #06b6d4);
+  border-radius: 3px;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: 'Inter', system-ui, sans-serif;
 }
+
+/* ─── Utility Classes ─── */
+
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-strong {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  .glow-indigo {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.3), 0 0 60px rgba(99, 102, 241, 0.1);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.3), 0 0 60px rgba(6, 182, 212, 0.1);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #6366f1, #06b6d4, #10b981);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gradient-text-warm {
+    background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .bg-mesh {
+    background-color: #020617;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+  }
+
+  .bg-grid {
+    background-size: 60px 60px;
+    background-image:
+      linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+  }
+
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 30px rgba(99, 102, 241, 0.1);
+  }
+
+  .shimmer-bg {
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.08), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  .border-gradient {
+    border: double 1px transparent;
+    background-image: linear-gradient(#020617, #020617), linear-gradient(135deg, #6366f1, #06b6d4);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+
+  .stat-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+  }
+
+  .nav-link-active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.1));
+    border-left: 3px solid #6366f1;
+    color: #a5b4fc;
+  }
+}
+
+/* ─── Leaflet ─── */
 
 .leaflet-container {
   width: 100%;
   height: 100%;
   border-radius: 0.75rem;
+}
+
+/* ─── Animations ─── */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
