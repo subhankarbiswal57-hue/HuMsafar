@@ -69,3 +69,4 @@
 2026-10-16 02:54:46 - ci: optimize build pipeline caching
 2026-10-16 02:54:46 - feat: add geolocation accuracy filter
 2026-10-16 02:54:46 - fix: handle timeout in image upload service
+2026-10-16 02:54:47 - chore: clean up deprecated config entries
