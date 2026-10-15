@@ -71,3 +71,4 @@
 2026-10-16 02:54:46 - fix: handle timeout in image upload service
 2026-10-16 02:54:47 - chore: clean up deprecated config entries
 2026-10-16 02:54:47 - refactor: extract shared validation helpers
+2026-10-16 02:54:47 - docs: update deployment runbook
