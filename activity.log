@@ -73,3 +73,4 @@
 2026-10-16 02:54:47 - refactor: extract shared validation helpers
 2026-10-16 02:54:47 - docs: update deployment runbook
 2026-10-16 02:54:48 - test: verify rate limiter edge cases
+2026-10-16 02:54:48 - feat: add complaint status webhook
