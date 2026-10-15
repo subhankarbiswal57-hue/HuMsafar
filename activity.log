@@ -60,3 +60,4 @@
 2026-07-31 12:00:00 - chore(history): sync progress log 20
 2026-10-16 02:54:43 - feat: optimize dashboard query performance
 2026-10-16 02:54:43 - fix: resolve edge case in complaint parser
+2026-10-16 02:54:43 - refactor: simplify middleware chain logic
