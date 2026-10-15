@@ -101,3 +101,5 @@ Uploaded photos are written to `backend/uploads/` and served statically at `http
 
 ## Roadmap
 This covers Phases 1–2 of an 8-phase build (see project plan). Remaining phases add: real analytics dashboards built on this data (Phase 3), the AI Prediction Engine — FastAPI/ML for deterioration, flood risk, congestion, bridge failure (Phase 4), Resilience & Social Sustainability scoring (Phase 5), the 3D Digital Twin (Phase 6), a RAG-based AI chat assistant over infrastructure documents (Phase 7), and Admin/Notifications/security hardening (Phase 8).
+
+<!-- update sync 5 -->
