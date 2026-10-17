@@ -90,3 +90,4 @@
 2026-10-17 17:59:55 - feat: implement complaint priority scoring
 2026-10-17 17:59:56 - fix: correct pagination offset calculation
 2026-10-17 17:59:57 - chore: remove unused legacy endpoints
+2026-10-17 17:59:57 - refactor: consolidate error response format
