@@ -80,3 +80,4 @@
 2026-10-16 02:54:49 - refactor: modularize notification service
 2026-10-17 17:59:50 - feat: add request throttling middleware
 2026-10-17 17:59:51 - fix: sanitize user input on form submit
+2026-10-17 17:59:51 - refactor: decouple auth from route handler
