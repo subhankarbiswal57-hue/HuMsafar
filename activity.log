@@ -83,3 +83,4 @@
 2026-10-17 17:59:51 - refactor: decouple auth from route handler
 2026-10-17 17:59:52 - chore: update eslint configuration
 2026-10-17 17:59:52 - docs: add API rate limit guidelines
+2026-10-17 17:59:53 - perf: optimize image compression pipeline
