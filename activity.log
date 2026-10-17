@@ -95,3 +95,4 @@
 2026-10-17 17:59:58 - test: add stress test for upload endpoint
 2026-10-17 17:59:58 - feat: add bulk complaint export feature
 2026-10-17 17:59:58 - perf: enable response caching headers
+2026-10-17 17:59:59 - fix: handle concurrent session conflicts
