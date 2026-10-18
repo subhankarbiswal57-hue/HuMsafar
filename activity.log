@@ -106,3 +106,4 @@
 2026-10-18 23:55:10 - style: standardize log timestamp formatting
 2026-10-18 23:55:15 - test: add unit coverage for date formatting helper
 2026-10-18 23:55:19 - ci: cache npm dependencies across workflow steps
+2026-10-18 23:55:24 - docs: update local development setup instructions
