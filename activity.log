@@ -98,3 +98,4 @@
 2026-10-17 17:59:59 - fix: handle concurrent session conflicts
 2026-10-17 17:59:59 - chore: update Docker base image version
 2026-10-17 17:59:59 - refactor: simplify database query builder
+2026-10-18 23:54:39 - docs: clarify environment configuration prerequisites
