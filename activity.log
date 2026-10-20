@@ -114,3 +114,4 @@
 2026-10-21 02:12:23 - docs: add architecture diagram notes to documentation
 2026-10-21 02:12:30 - perf: cache compiled regex patterns for query filters
 2026-10-21 02:12:36 - fix: guard against undefined metadata properties
+2026-10-21 02:12:41 - refactor: modularize request parameter validator
