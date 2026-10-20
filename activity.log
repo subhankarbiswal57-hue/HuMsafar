@@ -112,3 +112,4 @@
 2026-10-18 23:55:38 - perf: reduce memory footprint of transient buffer objects
 2026-10-18 23:55:43 - feat: add healthcheck telemetry ping timestamp
 2026-10-21 02:12:23 - docs: add architecture diagram notes to documentation
+2026-10-21 02:12:30 - perf: cache compiled regex patterns for query filters
